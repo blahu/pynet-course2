@@ -16,6 +16,7 @@ import time
 import socket
 import sys
 import getpass
+import re
 
 class Telneto :
 
@@ -27,11 +28,16 @@ class Telneto :
         self.ip_address = kwargs.get('ip_address')
         self.username = kwargs.get('username')
         self.password = kwargs.get('password')
+        self.prompt = kwargs.get('prompt')
+        self.debug = kwargs.get('debug', False)
 
         self.remote_conn = self.telnet_connect()
 
-        self.login()
-        self.disable_paging()
+        if not self.login():
+            sys.exit("Logging Error")
+
+        output = self.disable_paging()
+        if self.debug: print ("Disable_paging ({})".format(output))
 
     def telnet_connect(self):
         '''
@@ -41,6 +47,8 @@ class Telneto :
             return telnetlib.Telnet(self.ip_address, self.TELNET_PORT, self.TELNET_TIMEOUT)
         except socket.timeout:
             sys.exit("Connection timed-out")
+        except socket.gaierror:
+            sys.exit("Remote hostname unknown")
     
     def login(self):
         '''
@@ -48,9 +56,23 @@ class Telneto :
         '''
         output = self.remote_conn.read_until("sername:", self.TELNET_TIMEOUT)
         self.remote_conn.write(self.username + '\n')
+        time.sleep(1)
         output += self.remote_conn.read_until("ssword:", self.TELNET_TIMEOUT)
         self.remote_conn.write(self.password + '\n')
-        return output
+        time.sleep(1)
+        output += self.remote_conn.read_very_eager()
+
+        if self.debug: print ("Login ({})".format(output))
+
+        return self.check_prompt(output)
+
+    def check_prompt(self, output):
+        for l in output.splitlines():
+            m = re.match ( self.prompt, l)
+            if m:
+                return True
+        
+        return False
     
 
     def send_command(self, cmd):
@@ -62,7 +84,9 @@ class Telneto :
         cmd = cmd.rstrip()
         self.remote_conn.write(cmd + '\n')
         time.sleep(1)
-        return self.remote_conn.read_very_eager()
+        output = self.remote_conn.read_very_eager()
+        if self.check_prompt(output):
+            return output
     
     def disable_paging(self, paging_cmd='terminal length 0'):
         '''
@@ -85,7 +109,12 @@ def main():
     ip_addr = ip_addr.strip()
     username = 'pyclass'
     password = getpass.getpass()
-    kwargs = {'ip_address':ip_addr, 'username':username, 'password':password} 
+    kwargs = {
+        'ip_address':ip_addr, 
+        'username':username, 
+        'password':password,
+        'prompt':'pynet-rtr1#',
+    } 
     remote_conn = Telneto(**kwargs)
 
     output = remote_conn.send_command('show ip int brief')

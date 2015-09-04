@@ -23,13 +23,13 @@ class Telneto :
     TELNET_PORT = 23
     TELNET_TIMEOUT = 6
 
-    def __init__ (self, **kwargs):
+    def __init__ (self, ip_address, username, password, prompt, debug=False):
 
-        self.ip_address = kwargs.get('ip_address')
-        self.username = kwargs.get('username')
-        self.password = kwargs.get('password')
-        self.prompt = kwargs.get('prompt')
-        self.debug = kwargs.get('debug', False)
+        self.ip_address = ip_address
+        self.username = username
+        self.password = password
+        self.prompt = prompt
+        self.debug = debug
 
         self.remote_conn = self.telnet_connect()
 
@@ -67,9 +67,9 @@ class Telneto :
         return self.check_prompt(output)
 
     def check_prompt(self, output):
-        for l in output.splitlines():
-            m = re.match ( self.prompt, l)
-            if m:
+        for line in output.splitlines():
+            match = re.match ( self.prompt, line)
+            if match:
                 return True
         
         return False
@@ -87,6 +87,8 @@ class Telneto :
         output = self.remote_conn.read_very_eager()
         if self.check_prompt(output):
             return output
+        else:
+            sys.exit("Command not finished properly")
     
     def disable_paging(self, paging_cmd='terminal length 0'):
         '''

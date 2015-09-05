@@ -8,10 +8,6 @@
 
 from netmiko import ConnectHandler
 from getpass import getpass
-from time import sleep
-import re
-
-
 
 BUFFER = 512
 
@@ -44,12 +40,11 @@ def main():
         'password' : password,
     }
 
-    devices = [ pynet_rtr1, pynet_rtr2, pynet_jnpr_srx1 ]
+    devices = [pynet_rtr1, pynet_rtr2, pynet_jnpr_srx1]
     for a_device in devices:
         a_device['verbose'] = False
         net_connect = ConnectHandler(**a_device)
-        output = net_connect.send_command(u'show arp', strip_command = True, strip_prompt = True)
-        
+        output = net_connect.send_command(u'show arp', strip_command=True, strip_prompt=True)
         print("")
         print("x"*80)
         print("a {} device {}:{}".format(a_device['device_type'], a_device['ip'], a_device['port']))

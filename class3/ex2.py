@@ -12,7 +12,7 @@ import re
 
 
 
-BUFFER=512
+BUFFER = 512
 
 def miko_read(remote_conn, prompt):
     """
@@ -44,7 +44,7 @@ def miko_send(remote_conn, command, prompt):
     command += '\n'
 
     # send the command
-    send_bytes = remote_conn.send(command)
+    remote_conn.send(command)
 
     # read the output of the command
     recv_bytes = miko_read(remote_conn, prompt)
@@ -53,7 +53,7 @@ def miko_send(remote_conn, command, prompt):
 
 def main():
 
-    pynet_rtr2={
+    pynet_rtr2 = {
         "hostname" : "50.76.53.27",
         "port" : 8022,
         "username" : "pyclass",
@@ -64,11 +64,11 @@ def main():
     enable_prompt = r'pynet-rtr2#'
     config_prompt = r'pynet-rtr2(config)#'
 
-    remote_conn_pre=paramiko.SSHClient()
+    remote_conn_pre = paramiko.SSHClient()
     remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     remote_conn_pre.connect(**pynet_rtr2)
 
-    remote_conn=remote_conn_pre.invoke_shell()
+    remote_conn = remote_conn_pre.invoke_shell()
     output = miko_read(remote_conn, enable_prompt)
     print(output)
 
@@ -80,9 +80,9 @@ def main():
         (r'show running-config | include buffered', enable_prompt),
     ]
 
-    for command in commands:
-        output = miko_send(remote_conn, command[0], command[1])
+    for command, expected_prompt in commands:
+        output = miko_send(remote_conn, command, expected_prompt)
         print(output)
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()

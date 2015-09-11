@@ -8,9 +8,7 @@
 
 from netmiko import ConnectHandler
 from getpass import getpass
-
-BUFFER = 512
-
+import time
 
 def main():
     """
@@ -39,8 +37,8 @@ def main():
         'username' : 'pyclass',
         'password' : password,
     }
-
     devices = [pynet_rtr1, pynet_rtr2, pynet_jnpr_srx1]
+    start_clock = time.time()
     for a_device in devices:
         a_device['verbose'] = False
         net_connect = ConnectHandler(**a_device)
@@ -49,6 +47,9 @@ def main():
         print("x"*80)
         print("a {} device {}:{}".format(a_device['device_type'], a_device['ip'], a_device['port']))
         print(output)
+
+    end_clock = time.time()
+    print "\nIt took {} sec to complete".format(end_clock-start_clock)
 
 if __name__ == '__main__':
     main()

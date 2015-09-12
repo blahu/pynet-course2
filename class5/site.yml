@@ -1,0 +1,37 @@
+---
+- hosts: local
+  tasks:
+  - name: "Generate access_switch config for class 5 exercise 1"
+    template: src=ex1_access_switch.j2 dest="configs/ex1_{{ item.hostname }}.txt"
+    with_items:
+      - { hostname: 'sw1', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.11', default_gateway: '10.0.100.1', snmp_community: 'public'}
+      - { hostname: 'sw2', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.12', default_gateway: '10.0.100.1', snmp_community: 'public'}
+      - { hostname: 'sw3', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.13', default_gateway: '10.0.100.1', snmp_community: 'public'}
+      - { hostname: 'sw4', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.14', default_gateway: '10.0.100.1', snmp_community: 'public'}
+      - { hostname: 'sw5', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.15', default_gateway: '10.0.100.1', snmp_community: 'public'}
+
+- hosts: local
+  vars:
+  - ex: 2
+  tasks:
+  - name: "Generate access_switch config for class 5 exercise {{ ex }}"
+    template: src=ex{{ ex }}_access_switch.j2 dest="configs/ex{{ ex }}_{{ item.hostname }}.txt"
+    with_items:
+      - { hostname: 'sw1', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.11', default_gateway: '10.0.100.1', snmp_community: 'public', SNMPV3: True}
+      - { hostname: 'sw2', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.12', default_gateway: '10.0.100.1', snmp_community: 'public', SNMPV3: True}
+      - { hostname: 'sw3', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.13', default_gateway: '10.0.100.1', snmp_community: 'public', SNMPV3: False}
+      - { hostname: 'sw4', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.14', default_gateway: '10.0.100.1', snmp_community: 'public', SNMPV3: True}
+      - { hostname: 'sw5', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.15', default_gateway: '10.0.100.1', snmp_community: 'public', SNMPV3: True}
+
+- hosts: local
+  vars:
+  - ex: 3
+  tasks:
+  - name: "Generate access_switch config for class 5 exercise {{ ex }}"
+    template: src=ex{{ ex }}_access_switch.j2 dest="configs/ex{{ ex }}_{{ item.hostname }}.txt"
+    with_items:
+      - { hostname: 'sw1', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.11', default_gateway: '10.0.100.1', snmp_community: 'public', SNMPV3: True}
+      - { hostname: 'sw2', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.12', default_gateway: '10.0.100.1', snmp_community: 'public', SNMPV3: True}
+      - { hostname: 'sw3', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.13', default_gateway: '10.0.100.1', snmp_community: 'public', SNMPV3: False}
+      - { hostname: 'sw4', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.14', default_gateway: '10.0.100.1', snmp_community: 'public', SNMPV3: True}
+      - { hostname: 'sw5', secret: 's3cr3t', access_vlan: '1', ip_addr: '10.0.100.15', default_gateway: '10.0.100.1', snmp_community: 'public', SNMPV3: True}

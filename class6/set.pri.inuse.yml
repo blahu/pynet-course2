@@ -1,0 +1,35 @@
+---
+- hosts: arista
+  tasks:
+  
+  - name: "Deconfigure description on Primary interface Ethernet3"
+    eos_interface: name=Ethernet3 
+        description=""
+        username={{ eapi_username }} password={{ eapi_password }}
+        connection={{ inventory_hostname }} port={{ eapi_port }} transport="https"
+  
+  - name: "Deconfigure description on Secondary interface Ethernet6"
+    eos_interface: name=Ethernet6 
+        description=""
+        username={{ eapi_username }} password={{ eapi_password }}
+        connection={{ inventory_hostname }} port={{ eapi_port }} transport="https"
+
+
+  - name: "Configure description on Primary interface Ethernet3"
+    eos_interface: name=Ethernet3 
+        description="*** IN USE by ***"
+        username={{ eapi_username }} password={{ eapi_password }}
+        connection={{ inventory_hostname }} port={{ eapi_port }} transport="https"
+  
+  - name: "Collect facts"
+    eos_facts: include=interfaces,vlans
+        username={{ eapi_username }} password={{ eapi_password }}
+        connection={{ inventory_hostname }} port={{ eapi_port }} transport="https"
+    
+  - name: "Print Facts about Ethernet3"
+    debug: var=eos.interfaces.Ethernet3.description
+
+  - name: "Print Facts about Ethernet6"
+    debug: var=eos.interfaces.Ethernet6.description
+
+
